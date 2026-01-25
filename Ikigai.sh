@@ -108,16 +108,18 @@ systemctl enable --now fail2ban
 # Summary and status
 #-----------------------
 echo
-echo "[+] ===== Summary ====="
-echo "[+] Firewall (UFW):"
+echo "===== Summary ====="
+
+echo
+echo "Firewall (UFW):"
 ufw status verbose
 
 echo
-echo "[+] Fail2Ban status:"
+echo "Fail2Ban status:"
 fail2ban-client status
 
 echo
-echo "[+] Open ports:"
+echo "Open ports:"
 netstat -tunlp
 
 echo "[+] Hardening completed successfully."

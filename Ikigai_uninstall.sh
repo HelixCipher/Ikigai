@@ -74,7 +74,29 @@ echo "[+] Removing configuration files..."
 rm -f /etc/sysctl.d/99-hardening.conf
 rm -f /etc/fail2ban/jail.local
 
-# Optional: reload sysctl
+
+#-----------------------
+# Reload sysctl
+#-----------------------
+echo "[+] Reloading sysctl configuration"
 sysctl --system || true
 
-echo "[+] Ikigai uninstall completed. Your system is reverted from script modifications."
+
+
+#-----------------------
+# Summary
+#-----------------------
+echo
+echo "===== Uninstall Summary ====="
+
+echo
+echo "• Ikigai-installed packages removed"
+
+echo
+echo "• UFW rules reset to defaults"
+
+echo
+echo "• Ikigai kernel hardening reverted"
+
+echo
+echo "Uninstall completed."
