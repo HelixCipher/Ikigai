@@ -74,28 +74,49 @@ The script performs the following actions (idempotent where possible):
   * Rate-limited SSH (port 22)
 
   * Allows HTTP (80) and HTTPS (443)
+
+  * Enables UFW rules immediately
+
+> ℹ️ **Note:** On some distros (Ubuntu/Debian), `systemctl status ufw` may show `inactive (dead)`. This is normal: the firewall rules are active and persist across reboots. Use `sudo ufw status verbose` to verify the firewall status.
+
+### Kernel hardening
     
 * Writes a persistent kernel hardening file under `/etc/sysctl.d/99-hardening.conf` and applies the settings via `sysctl --system`.
 * Installs and enables Fail2Ban; writes `/etc/fail2ban/jail.local` with a sane default SSH jail.
 * Prints firewall status, Fail2Ban status, and listening ports at completion
 
+
+### Fail2Ban
+
+* Writes `/etc/fail2ban/jail.local` with a sane default SSH jail
+* Enables and starts the service
+* Protects against brute-force login attempts
+
+
+### Summary
+
+At the end, the script prints:
+
+* UFW status
+* Fail2Ban status
+* Open/listening ports
+
 ---
 
 ## Design philosophy
 
-Security should be intentional, not accidental
+* Security should be intentional, not accidental
 
-Automation should be readable, not opaque
+* Automation should be readable, not opaque
 
-Defaults should be safe, not surprising
+* Defaults should be safe, not surprising
 
-One firewall at a time — mixing firewall frameworks causes instability
+* One firewall at a time — mixing firewall frameworks causes instability
 
 UFW is intentionally chosen here because it provides a clean abstraction over iptables/nftables while remaining understandable to most users.
 
-**Do not run multiple firewall managers concurrently**
-(e.g. UFW alongside nftables or raw iptables rules).
-Doing so can result in rule conflicts and unpredictable network behavior.
+**Do not run multiple firewall managers concurrently**  
+(e.g., UFW alongside raw iptables or nftables rules). Conflicts may occur.
 
 ---
 

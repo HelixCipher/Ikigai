@@ -49,22 +49,32 @@ install_pkgs() {
 #-----------------------
 # Base security packages
 #-----------------------
+echo "[+] Installing security packages: ufw, fail2ban, net-tools..."
 install_pkgs ufw fail2ban net-tools
 
 #-----------------------
 # Firewall ufw
 #-----------------------
+echo "[+] Configuring firewall..."
 ufw --force reset
 ufw default deny incoming
 ufw default allow outgoing
 ufw limit 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
-systemctl enable --now ufw
+ufw --force enable
+echo "[+] UFW enabled and rules applied."
+
+# Clarify systemctl status behavior
+echo "[i] Note: On Ubuntu/Debian, 'systemctl status ufw' may show 'inactive (dead)'."
+echo "[i] This is normal: UFW rules are applied and persist across reboots."
+echo "[i] Use 'sudo ufw status verbose' to verify the firewall is active."
+
 
 #-----------------------
 # Kernel hardening
 #-----------------------
+echo "[+] Applying kernel hardening..."
 cat <<EOF >/etc/sysctl.d/99-hardening.conf
 net.ipv4.conf.all.rp_filter=1
 net.ipv4.conf.default.rp_filter=1
@@ -80,6 +90,7 @@ sysctl --system
 #-----------------------
 # Fail2Ban
 #-----------------------
+echo "[+] Configuring Fail2Ban..."
 cat <<EOF >/etc/fail2ban/jail.local
 [DEFAULT]
 ignoreip = 127.0.0.1/8 ::1
@@ -94,15 +105,19 @@ EOF
 systemctl enable --now fail2ban
 
 #-----------------------
-# Status
+# Summary and status
 #-----------------------
-echo "[+] Firewall:"
+echo
+echo "[+] ===== Summary ====="
+echo "[+] Firewall (UFW):"
 ufw status verbose
 
-echo "[+] Fail2Ban:"
+echo
+echo "[+] Fail2Ban status:"
 fail2ban-client status
 
+echo
 echo "[+] Open ports:"
 netstat -tunlp
 
-echo "[+] Hardening completed"
+echo "[+] Hardening completed successfully."
